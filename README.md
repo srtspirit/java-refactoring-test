@@ -27,7 +27,7 @@ Prerequisites
 
 * You must have a Github account. If you don't have one, please create one via the [Github website](http://github.com/).
 * This repo uses Git for source control management (SCM). If you don't already have the git utility already installed on your machine you will need to install it. To do so, check out the [git downloads page](http://git-scm.com/downloads).
-* To build this project you must use Gradle. If you do not have Maven already installed on your machine you will need to install it. To do so, check out the [Gradle downloads](https://gradle.org/install/).
+* To build this project you must use Gradle. If you do not have gradle already installed on your machine you will need to install it. To do so, check out the [Gradle downloads](https://gradle.org/install/).
 
 Instructions
 ------------

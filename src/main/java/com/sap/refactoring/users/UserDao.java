@@ -2,6 +2,8 @@ package com.sap.refactoring.users;
 
 import java.util.ArrayList;
 
+import jakarta.transaction.Transactional;
+
 public class UserDao
 {
 	public ArrayList<User> users;
@@ -15,6 +17,7 @@ public class UserDao
 		return userDao;
 	}
 
+	@Transactional
 	public void saveUser(User user) {
 		if (users == null) {
 			users = new ArrayList<User>();
@@ -49,6 +52,7 @@ public class UserDao
 				if (user.getName() == userToUpdate.getName()) {
 					user.setEmail(userToUpdate.getEmail());
 					user.setRoles(userToUpdate.getRoles());
+					this.saveUser(user);
 				}
 			}
 		} catch (RuntimeException e) {
