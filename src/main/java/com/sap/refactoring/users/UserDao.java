@@ -2,7 +2,6 @@ package com.sap.refactoring.users;
 
 import java.util.ArrayList;
 
-import jakarta.transaction.Transactional;
 
 public class UserDao
 {
@@ -17,7 +16,7 @@ public class UserDao
 		return userDao;
 	}
 
-	@Transactional
+//	@Transactional
 	public void saveUser(User user) {
 		if (users == null) {
 			users = new ArrayList<User>();

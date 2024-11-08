@@ -73,11 +73,7 @@ public class UserController
 	}
 	@GetMapping("find/")
 	public ResponseEntity getUsers() {
-
-		ApplicationContext context = new ClassPathXmlApplicationContext(new String[] {
-				"classpath:/application-config.xml"
-		});
-		userDao = context.getBean(UserDao.class);
+		userDao = UserDao.getUserDao();
 		List<User> users = userDao.getUsers();
 		if (users == null) {
 			users = new ArrayList<>();

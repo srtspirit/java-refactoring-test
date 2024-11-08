@@ -1,6 +1,7 @@
 package com.sap.refactoring.unit;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 import com.sap.refactoring.users.User;
@@ -8,6 +9,7 @@ import com.sap.refactoring.users.UserDao;
 import com.sap.refactoring.web.controller.UserController;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UserResourceUnitTest
 {
@@ -26,6 +28,6 @@ public class UserResourceUnitTest
 		userDao.saveUser(user);
 
 		ResponseEntity response = userController.getUsers();
-		assertThat(response.getStatusCode()).isEqualTo(200);
+		assertTrue(response.getStatusCode().is2xxSuccessful());
 	}
 }
