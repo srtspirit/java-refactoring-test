@@ -1,40 +1,48 @@
 package com.sap.refactoring.users;
 
-import java.util.List;
+import jakarta.validation.constraints.*;
+import lombok.*;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class User
 {
-	String name;
-	String email;
-	List<String> roles;
+	private UUID uuid;
+	@Size(max = 100)
+	@NotNull
+	private String name;
+	@Email
+	@NotNull
+	private String email;
+	@NotNull
+	@Size(min = 1, max = 100)
+    private List<String> roles;
 
-	public String getName()
-	{
-		return name;
+
+	// getters and setter for roles to avoid its modification from outside of this class
+    public void setRoles(List<String> roles) {
+		this.roles = roles != null? new ArrayList<>(roles): List.of();
 	}
 
-	public void setName(String name)
-	{
-		this.name = name;
+	public List<String> getRoles() {
+		return Collections.unmodifiableList(roles);
 	}
 
-	public String getEmail()
-	{
-		return email;
-	}
-
-	public void setEmail(String email)
-	{
-		this.email = email;
-	}
-
-	public List<String> getRoles()
-	{
-		return roles;
-	}
-
-	public void setRoles(List<String> roles)
-	{
-		this.roles = roles;
+	/**
+	 * Copy constructor makes sure that changes in the original object don't affect the new object
+	 * @param other
+	 */
+	public User(User other) {
+		this.uuid = other.getUuid();
+		this.name = other.getName();
+		this.email = other.getEmail();
+		this.setRoles(other.getRoles());
 	}
 }
