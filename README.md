@@ -3,6 +3,31 @@ Java Refactoring Test Project
 
 **Please, before starting this test, read through all of the instructions carefully!**
 
+Before running the build!!!
+------------
+* Please note that for the build of the final version (wih bonus task) you will need a running container with postgres (for integration test). Please use `docker-compose up` before executing `gradle build`
+* If you want to build the project without having to use docker you need to checkout the version before docker and postgres were introduced (with only primary task): `git checkout v0.0.1`. You might need to fetch tags first `git fetch --tags`
+
+What was done in the refactoring
+------------
+* Usage of spring dependency injection mechanism. Before it was done through access to static getInstance methods
+* Added a layer of business logic (aka service layer)
+* Changed API endpoints making them more RESTful
+* User now has id attribute. It's done because usage of email address as unique id and as part of URL (/users/my@email.com) might be tricky
+* fix: methods of `UserDao` were not thread safe and could cause race conditions
+  * note that after attaching dockerized postgres db to the project `UserDao` was renamed to `InmemoryUserDao` and another dao emerged `DataBaseUserDao`
+* Fix: `UserDao` object used to hold mutable collections which could create problems with modifying data outside of user class
+* Fix: `User` object used to hold mutable collections which could create problems with modifying data outside of user class
+* Fix: comparing objects using `==`
+* added validation of data received to User API
+* Usage of `lombok`
+* introduced loggers to avoid using `System.out.println`
+
+What I would like to add next
+------------
+* additional endpoint for roles. The time being we have only one endpoint `user` and it is responsible for creating roles as well. Such approach will create problems later on
+* security to endpoint so that only entitled users could manage roles and users
+
 Introduction
 ------------
 
