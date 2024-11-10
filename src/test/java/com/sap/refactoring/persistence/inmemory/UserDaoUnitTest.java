@@ -1,6 +1,5 @@
-package com.sap.refactoring.unit;
+package com.sap.refactoring.persistence.inmemory;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -11,9 +10,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.sap.refactoring.users.User;
-import com.sap.refactoring.users.UserDao;
-import spock.util.mop.Use;
+import com.sap.refactoring.models.User;
 
 public class UserDaoUnitTest
 {

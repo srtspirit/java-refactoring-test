@@ -1,7 +1,10 @@
-package com.sap.refactoring.users;
+package com.sap.refactoring.services;
 
 import com.sap.refactoring.exceptions.IllegalRequestException;
 import com.sap.refactoring.exceptions.NotFoundException;
+import com.sap.refactoring.models.User;
+import com.sap.refactoring.models.UserUniqueKey;
+import com.sap.refactoring.persistence.inmemory.UserDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

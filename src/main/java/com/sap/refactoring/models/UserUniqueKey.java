@@ -1,4 +1,4 @@
-package com.sap.refactoring.users;
+package com.sap.refactoring.models;
 
 import lombok.*;
 

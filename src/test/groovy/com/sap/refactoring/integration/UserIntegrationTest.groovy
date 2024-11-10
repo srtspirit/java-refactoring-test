@@ -1,7 +1,7 @@
 package com.sap.refactoring.integration
 
 import com.sap.refactoring.JavaRefactoringTestApplication
-import com.sap.refactoring.users.User
+import com.sap.refactoring.models.User
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate

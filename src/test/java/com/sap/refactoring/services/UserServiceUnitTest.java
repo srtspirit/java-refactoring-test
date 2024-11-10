@@ -1,11 +1,9 @@
-package com.sap.refactoring.unit;
+package com.sap.refactoring.services;
 
 import com.sap.refactoring.exceptions.IllegalRequestException;
 import com.sap.refactoring.exceptions.NotFoundException;
-import com.sap.refactoring.users.User;
-import com.sap.refactoring.users.UserDao;
-import com.sap.refactoring.users.UserService;
-import org.junit.jupiter.api.BeforeEach;
+import com.sap.refactoring.models.User;
+import com.sap.refactoring.persistence.inmemory.UserDao;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

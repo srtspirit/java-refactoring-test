@@ -1,17 +1,15 @@
 package com.sap.refactoring.web.controller;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
-import com.sap.refactoring.users.UserService;
+import com.sap.refactoring.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import com.sap.refactoring.users.User;
+import com.sap.refactoring.models.User;
 
 @Controller
 @RequestMapping(UserController.USERS_URL)

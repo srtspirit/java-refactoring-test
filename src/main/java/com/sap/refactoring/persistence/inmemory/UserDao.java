@@ -1,7 +1,9 @@
-package com.sap.refactoring.users;
+package com.sap.refactoring.persistence.inmemory;
 
 import com.sap.refactoring.exceptions.ConstraintViolationException;
 import com.sap.refactoring.exceptions.NotFoundException;
+import com.sap.refactoring.models.User;
+import com.sap.refactoring.models.UserUniqueKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 

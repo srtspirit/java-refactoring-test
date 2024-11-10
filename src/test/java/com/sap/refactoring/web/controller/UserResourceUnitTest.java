@@ -1,17 +1,15 @@
-package com.sap.refactoring.unit;
+package com.sap.refactoring.web.controller;
 
-import com.sap.refactoring.users.UserService;
+import com.sap.refactoring.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
-import com.sap.refactoring.users.User;
-import com.sap.refactoring.web.controller.UserController;
+import com.sap.refactoring.models.User;
 
 import java.util.Collection;
 import java.util.Collections;
