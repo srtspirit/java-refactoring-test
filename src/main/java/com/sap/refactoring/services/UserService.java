@@ -14,6 +14,7 @@ import java.util.Collection;
 @Slf4j
 public class UserService {
     private final UserDao userDao;
+    private final Object modifyUserLock = new Object(); // for synchronization
 
     public UserService(UserDao userDao) {
         this.userDao = userDao;
@@ -37,10 +38,12 @@ public class UserService {
      * @param uuid
      */
     public void deleteUser(String uuid) {
-        try {
-            userDao.deleteUser(getUserById(uuid));
-        } catch (NotFoundException e){
-            log.warn("deleteUser: user with id {} does not exist", uuid);
+        synchronized (modifyUserLock) {
+            try {
+                userDao.deleteUser(getUserById(uuid));
+            } catch (NotFoundException e) {
+                log.warn("deleteUser: user with id {} does not exist", uuid);
+            }
         }
     }
 
@@ -53,14 +56,16 @@ public class UserService {
      * @throws {@link com.sap.refactoring.exceptions.NotFoundException} if there is no resource to update
      * {@link IllegalRequestException} when unique keys are being changed
      */
-    synchronized public User updateUser(String uuid, User updatedUser) {
-        final User oldUser = getUserById(uuid);
-        if (!new UserUniqueKey(oldUser).equals(new UserUniqueKey(updatedUser))){
-            throw new IllegalRequestException("impossible to change unique keys! Please remove object first then recreate it with updated fields");
-        }
+    public User updateUser(String uuid, User updatedUser) {
+        synchronized (modifyUserLock) {
+            final User oldUser = getUserById(uuid);
+            if (!new UserUniqueKey(oldUser).equals(new UserUniqueKey(updatedUser))) {
+                throw new IllegalRequestException("impossible to change unique keys! Please remove object first then recreate it with updated fields");
+            }
 
-        updatedUser.setUuid(oldUser.getUuid());
-        updatedUser = userDao.updateUser(updatedUser);
+            updatedUser.setUuid(oldUser.getUuid());
+            updatedUser = userDao.updateUser(updatedUser);
+        }
 
         return updatedUser;
     }
