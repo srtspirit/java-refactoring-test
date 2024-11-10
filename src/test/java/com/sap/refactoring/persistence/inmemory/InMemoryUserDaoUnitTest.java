@@ -12,13 +12,13 @@ import org.junit.jupiter.api.Test;
 
 import com.sap.refactoring.models.User;
 
-public class UserDaoUnitTest
+public class InMemoryUserDaoUnitTest
 {
-	UserDao userDao;
+	InMemoryUserDao userDao;
 
 	@BeforeEach()
 	public void setup(){
-		userDao = new UserDao();
+		userDao = new InMemoryUserDao();
 	}
 
 	@Test
@@ -30,8 +30,8 @@ public class UserDaoUnitTest
 								.build();
 
 		final User savedUser = userDao.saveUser(user);
-		Assertions.assertNotNull(savedUser.getUuid());
-		Assertions.assertEquals(savedUser, userDao.getUserById(savedUser.getUuid().toString()));
+		Assertions.assertNotNull(savedUser.getId());
+		Assertions.assertEquals(savedUser, userDao.getUserById(savedUser.getId().toString()));
 	}
 
 	@Test
@@ -88,12 +88,12 @@ public class UserDaoUnitTest
 				.build();
 
 		final User savedUser = userDao.saveUser(user);
-		Assertions.assertEquals(savedUser, userDao.getUserById(savedUser.getUuid().toString()));
+		Assertions.assertEquals(savedUser, userDao.getUserById(savedUser.getId().toString()));
 
 		//when
 		userDao.deleteUser(savedUser);
 		//then
-		Assertions.assertThrows(NotFoundException.class, () -> userDao.getUserById(savedUser.getUuid().toString()));
+		Assertions.assertThrows(NotFoundException.class, () -> userDao.getUserById(savedUser.getId().toString()));
 
 		//then does not throw when delete again
 		Assertions.assertDoesNotThrow(() -> userDao.deleteUser(savedUser));
@@ -109,7 +109,7 @@ public class UserDaoUnitTest
 				.build();
 
 		final User savedUser = userDao.saveUser(user);
-		final String uuid = savedUser.getUuid().toString();
+		final String uuid = savedUser.getId().toString();
 
 		//when
 		final String newName = "new_Name";
@@ -147,8 +147,8 @@ public class UserDaoUnitTest
 		user.setName("new name");
 		savedUser.setName("new name");
 		//then changes should not affect the persisted object
-		Assertions.assertNotEquals(savedUser, userDao.getUserById(savedUser.getUuid().toString()));
-		Assertions.assertNotEquals(user, userDao.getUserById(savedUser.getUuid().toString()));
+		Assertions.assertNotEquals(savedUser, userDao.getUserById(savedUser.getId().toString()));
+		Assertions.assertNotEquals(user, userDao.getUserById(savedUser.getId().toString()));
 	}
 
 	@Test
@@ -160,7 +160,7 @@ public class UserDaoUnitTest
 				.roles(List.of("admin", "master"))
 				.build();
 
-		final String uuid = userDao.saveUser(user).getUuid().toString();
+		final String uuid = userDao.saveUser(user).getId().toString();
 
 		final String newName = "new_Name";
 		user.setName(newName);
@@ -209,7 +209,7 @@ public class UserDaoUnitTest
 				.roles(List.of("admin", "master"))
 				.build();
 
-		final String uuid = userDao.saveUser(user).getUuid().toString();
+		final String uuid = userDao.saveUser(user).getId().toString();
 
 		//when retreive and change user
 		final User retreivedUser = userDao.getAllUsers().iterator().next();
@@ -228,7 +228,7 @@ public class UserDaoUnitTest
 				.roles(List.of("admin", "master"))
 				.build();
 
-		final String uuid = userDao.saveUser(user).getUuid().toString();
+		final String uuid = userDao.saveUser(user).getId().toString();
 
 		//when retreive and change user
 		final User retreivedUser = userDao.getUserById(uuid);
@@ -248,7 +248,7 @@ public class UserDaoUnitTest
 				.roles(List.of("admin", "master"))
 				.build();
 
-		final String uuid = userDao.saveUser(user).getUuid().toString();
+		final String uuid = userDao.saveUser(user).getId().toString();
 
 		//when retreive and change user
 		final User retreivedUser = userDao.findUsersByName(name).iterator().next();

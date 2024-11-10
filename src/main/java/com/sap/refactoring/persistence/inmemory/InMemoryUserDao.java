@@ -4,6 +4,7 @@ import com.sap.refactoring.exceptions.ConstraintViolationException;
 import com.sap.refactoring.exceptions.NotFoundException;
 import com.sap.refactoring.models.User;
 import com.sap.refactoring.models.UserUniqueKey;
+import com.sap.refactoring.persistence.UserDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
@@ -11,9 +12,14 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 
+/**
+ * In memory implementation if {@link UserDao}.
+ * It keeps users in an internal collection and watches for race conditions
+ */
 @Repository
+//@Primary
 @Slf4j
-public class UserDao
+public class InMemoryUserDao implements UserDao
 {
 	private final Map<UserUniqueKey, User> users = new ConcurrentHashMap<>();
 
@@ -25,9 +31,8 @@ public class UserDao
 	 * @return created user
 	 * @throws {@link ConstraintViolationException}
 	 */
-//	@Transactional
 	public User saveUser(User newUser) {
-		newUser.setUuid(UUID.randomUUID());
+		newUser.setId(UUID.randomUUID());
 
 		final User copyToPersist = new User(newUser);
 		final UserUniqueKey userUniqueKey = new UserUniqueKey(copyToPersist);
@@ -48,16 +53,16 @@ public class UserDao
 	}
 
 	/**
-	 * Retrieves user by its uuid.
-	 * Thorws {@link NotFoundException} if no users found.
+	 * Retrieves user by its id.
+	 * Throws {@link NotFoundException} if no users found.
 	 * It iterates over the collection of users and looks for the one with given id.
 	 * Complexity of such search is O(n) because we sacrificed possibility to use hashes for more important unique constraint checking
-	 * @param uuid
+	 * @param id
 	 * @return
 	 */
-	public User getUserById(String uuid){
+	public User getUserById(String id){
 		return users.values().stream()
-				.filter(u -> u.getUuid().toString().equals(uuid))
+				.filter(u -> u.getId().toString().equals(id))
 				.findFirst()
 				.map(User::new)
 				.orElseThrow(NotFoundException::new);
@@ -70,7 +75,7 @@ public class UserDao
 	public void deleteUser(User userToDelete) {
 		final User deletedUser = users.remove(new UserUniqueKey(userToDelete));
 		if (deletedUser == null){
-			log.warn("the user with id {} does not exist", userToDelete.getUuid());
+			log.warn("the user with id {} does not exist", userToDelete.getId());
 		}
 	}
 
@@ -92,4 +97,5 @@ public class UserDao
 				.filter(u -> u.getName().equals(name))
 				.map(User::new)
 				.toList();
-	}}
+	}
+}

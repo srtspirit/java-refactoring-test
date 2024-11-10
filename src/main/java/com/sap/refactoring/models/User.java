@@ -14,7 +14,7 @@ import java.util.UUID;
 @Builder
 public class User
 {
-	private UUID uuid;
+	private UUID id;
 	@Size(max = 100)
 	@NotNull
 	private String name;
@@ -40,7 +40,7 @@ public class User
 	 * @param other
 	 */
 	public User(User other) {
-		this.uuid = other.getUuid();
+		this.id = other.getId();
 		this.name = other.getName();
 		this.email = other.getEmail();
 		this.setRoles(other.getRoles());

@@ -3,6 +3,7 @@ package com.sap.refactoring.web.controller;
 import com.sap.refactoring.exceptions.ConstraintViolationException;
 import com.sap.refactoring.exceptions.IllegalRequestException;
 import com.sap.refactoring.exceptions.NotFoundException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -38,7 +39,9 @@ public class WebExceptionHandler {
     public void handleNotFoundExceptions(NotFoundException ex) {
     }
 
-    @ExceptionHandler({ConstraintViolationException.class, IllegalRequestException.class})
+    @ExceptionHandler({ConstraintViolationException.class,
+            IllegalRequestException.class,
+            DataAccessException.class})
     public ResponseEntity<Map<String, String>> handleConstraintViolationExceptions(Exception ex) {
         final Map<String, String> body = new HashMap<>();
         body.put("error", ex.getMessage());

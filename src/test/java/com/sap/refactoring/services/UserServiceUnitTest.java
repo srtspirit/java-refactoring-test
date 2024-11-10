@@ -3,7 +3,7 @@ package com.sap.refactoring.services;
 import com.sap.refactoring.exceptions.IllegalRequestException;
 import com.sap.refactoring.exceptions.NotFoundException;
 import com.sap.refactoring.models.User;
-import com.sap.refactoring.persistence.inmemory.UserDao;
+import com.sap.refactoring.persistence.inmemory.InMemoryUserDao;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 public class UserServiceUnitTest {
     private static final String ID = "123";
     @Mock
-    private UserDao userDao;
+    private InMemoryUserDao userDao;
 
     @InjectMocks
     private UserService userService;

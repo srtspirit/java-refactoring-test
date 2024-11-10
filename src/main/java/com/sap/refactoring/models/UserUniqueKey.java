@@ -16,7 +16,7 @@ public class UserUniqueKey {
 
     /**
      * constructs unique key based on the given {@link User}
-     * @param user
+     * @param user user to copy
      */
     public UserUniqueKey(final User user){
         this.email = user.getEmail();

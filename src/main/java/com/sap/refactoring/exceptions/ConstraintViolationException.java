@@ -7,4 +7,8 @@ public class ConstraintViolationException extends RuntimeException {
     public ConstraintViolationException(String message) {
         super(message);
     }
+
+    public ConstraintViolationException(Throwable cause) {
+        super(cause);
+    }
 }

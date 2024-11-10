@@ -9,8 +9,13 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpRequest
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
+import org.springframework.http.client.ClientHttpRequestExecution
+import org.springframework.http.client.ClientHttpRequestInterceptor
+import org.springframework.http.client.ClientHttpResponse
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
@@ -18,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = JavaRefactoringTestApplication)
+@ActiveProfiles("local")
 class UserIntegrationTest extends Specification {
     @LocalServerPort
     int port
@@ -25,13 +31,44 @@ class UserIntegrationTest extends Specification {
     @Autowired
     TestRestTemplate restTemplate
 
+    String [] createdIdentifiers = []
+
+    def setup() {
+        // use interceptors to collect info about created resources in order to clean them up at the end
+        def interceptors = new ArrayList<>(restTemplate.restTemplate.interceptors)
+        interceptors.add(new ClientHttpRequestInterceptor() {
+            @Override
+            ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+                ClientHttpResponse response = execution.execute(request, body)
+                if (request.getMethod() == HttpMethod.POST && response.statusCode.'2xxSuccessful'){
+                    def resourceId = response.getHeaders().getLocation().toString().split("/").last();
+                    createdIdentifiers += resourceId;
+                }
+
+                return response;
+            }
+        })
+
+        restTemplate.restTemplate.interceptors = interceptors
+    }
+
+    def cleanup(){
+        // cleanup all created resource in case they were not cleaned by test
+        createdIdentifiers.each {restTemplate.exchange(
+                "http://localhost:${port}/users/${it}",
+                HttpMethod.DELETE,
+                null,
+                Void
+        )}
+    }
+
     def "should load the context"() {
         expect: "context is loaded"
         restTemplate != null
         port != 0
     }
 
-    def "should get a user"() {
+    def "should get users"() {
         given:
         def users = [
                 [name: 'fake', email: 'fake1@email.com', roles: ['role']],
@@ -56,7 +93,7 @@ class UserIntegrationTest extends Specification {
 
         then:
         assertThat(getAllResponse.body.size()).isEqualTo(users.size())
-        def allUuids = getAllResponse.body.collect {it.getUuid().toString()}
+        def allUuids = getAllResponse.body.collect {it.getId().toString()}
 
         when: 'searching for limited users'
         ResponseEntity<Collection<User>> getLimitedResponse = restTemplate.exchange(
@@ -94,7 +131,7 @@ class UserIntegrationTest extends Specification {
         assertThat(postResponse.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(201))).isTrue()
 
         and:
-        def uuid = postResponse.getBody().uuid.toString()
+        def uuid = postResponse.getBody().id.toString()
         def locationUrl = postResponse.getHeaders().getLocation().toString()
         def locationUuid = locationUrl.split("/").last()
         assertThat(uuid).isEqualTo(locationUuid).asBoolean()
@@ -148,7 +185,7 @@ class UserIntegrationTest extends Specification {
 
         cleanup:
         restTemplate.exchange(
-                "http://localhost:${port}/users/${postResponse1.body.uuid.toString()}",
+                "http://localhost:${port}/users/${postResponse1.body.id.toString()}",
                 HttpMethod.DELETE,
                 null,
                 Void
@@ -189,7 +226,7 @@ class UserIntegrationTest extends Specification {
 
         assertThat(postResponse.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(201))).isTrue()
 
-        def uuid = postResponse.getBody().uuid.toString()
+        def uuid = postResponse.getBody().id.toString()
 
         when: "update the new resource"
         def newName = 'newName'
@@ -238,7 +275,7 @@ class UserIntegrationTest extends Specification {
 
         assertThat(postResponse.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(201))).isTrue()
 
-        def uuid = postResponse.getBody().uuid.toString()
+        def uuid = postResponse.getBody().id.toString()
 
         when: "update the new resource"
         def newEmail = 'another@email.com'

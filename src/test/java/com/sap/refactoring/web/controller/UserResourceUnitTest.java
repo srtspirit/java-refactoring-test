@@ -37,13 +37,13 @@ public class UserResourceUnitTest
 	@Test
 	void shouldAddUser() {
 		when(userService.saveUser(userInController)).thenReturn(userInService);
-		when(userInService.getUuid()).thenReturn(uuid);
+		when(userInService.getId()).thenReturn(uuid);
 
 		ResponseEntity<User> response = userController.addUser(userInController);
 
 		// Assert
 		assertEquals(201, response.getStatusCodeValue());
-		assertEquals("/users/" + userInService.getUuid().toString(), response.getHeaders().getLocation().toString());
+		assertEquals("/users/" + userInService.getId().toString(), response.getHeaders().getLocation().toString());
 		assertEquals(userInService, response.getBody());
 		Mockito.verify(userService, times(1)).saveUser(any(User.class));
 	}

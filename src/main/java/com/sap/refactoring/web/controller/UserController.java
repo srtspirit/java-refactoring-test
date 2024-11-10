@@ -26,7 +26,7 @@ public class UserController
 	public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
 		final User createdUser = userService.saveUser(user);
 		return ResponseEntity
-				.created(URI.create(USERS_URL + "/" + createdUser.getUuid().toString()))
+				.created(URI.create(USERS_URL + "/" + createdUser.getId().toString()))
 				.body(createdUser);
 	}
 

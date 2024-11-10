@@ -4,12 +4,15 @@ import com.sap.refactoring.exceptions.IllegalRequestException;
 import com.sap.refactoring.exceptions.NotFoundException;
 import com.sap.refactoring.models.User;
 import com.sap.refactoring.models.UserUniqueKey;
-import com.sap.refactoring.persistence.inmemory.UserDao;
+import com.sap.refactoring.persistence.UserDao;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
+/**
+ * Service layer implementation for user
+ */
 @Service
 @Slf4j
 public class UserService {
@@ -33,16 +36,16 @@ public class UserService {
     }
 
     /**
-     * Deletes user. First the method looks for a user with the given uuid and if user exists removes it.
+     * Deletes user. First the method looks for a user with the given id and if user exists removes it.
      * If user does not exist the method does nothing
-     * @param uuid
+     * @param id user's identifier
      */
-    public void deleteUser(String uuid) {
+    public void deleteUser(String id) {
         synchronized (modifyUserLock) {
             try {
-                userDao.deleteUser(getUserById(uuid));
+                userDao.deleteUser(getUserById(id));
             } catch (NotFoundException e) {
-                log.warn("deleteUser: user with id {} does not exist", uuid);
+                log.warn("deleteUser: user with id {} does not exist", id);
             }
         }
     }
@@ -50,20 +53,20 @@ public class UserService {
     /**
      * Updates user. Throws {@link NotFoundException} if the user is not found.
      * throws {@link IllegalRequestException} if the update operation tries to modify unique fields of user
-     * @param uuid
-     * @param updatedUser
+     * @param id user's identifier
+     * @param updatedUser {@link User} with new parameters
      * @return updated user
-     * @throws {@link com.sap.refactoring.exceptions.NotFoundException} if there is no resource to update
+     * @throws NotFoundException if there is no resource to update
      * {@link IllegalRequestException} when unique keys are being changed
      */
-    public User updateUser(String uuid, User updatedUser) {
+    public User updateUser(String id, User updatedUser) {
         synchronized (modifyUserLock) {
-            final User oldUser = getUserById(uuid);
+            final User oldUser = getUserById(id);
             if (!new UserUniqueKey(oldUser).equals(new UserUniqueKey(updatedUser))) {
                 throw new IllegalRequestException("impossible to change unique keys! Please remove object first then recreate it with updated fields");
             }
 
-            updatedUser.setUuid(oldUser.getUuid());
+            updatedUser.setId(oldUser.getId());
             updatedUser = userDao.updateUser(updatedUser);
         }
 
